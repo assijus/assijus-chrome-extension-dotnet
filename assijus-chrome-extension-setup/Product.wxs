@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="*" Name="Assijus Chrome Extension" Language="1033" Version="1.2.9.0" Manufacturer="TRF2 - Trubunal Regional Federal da 2a Regiao" UpgradeCode="fabf399a-24c0-4a38-9777-06993574075d">
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perUser" InstallPrivileges="limited" />
+
+    <MajorUpgrade DowngradeErrorMessage="Uma versao mais nova de [ProductName] ja esta instalada." />
+    <MediaTemplate  EmbedCab="yes"/>
+    
+    <Feature Id="ProductFeature" Title="Assijus Chrome Extension" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+    </Feature>
+  </Product>
+
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="LocalAppDataFolder">
+        <Directory Id="INSTALLFOLDER" Name="Assijus Chrome Extension"/>
+      </Directory>
+    </Directory>
+
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <Component Id="AssijusSigner" Guid="b4bcc834-369a-4ce6-8a93-1b6d5763ec68">
+        <CreateFolder/>
+        <RemoveFolder Id="RemoveAppRootDirectory" On="uninstall" />
+        <File Source="$(var.assijus-chrome-extension.TargetPath)" />
+        <File Source="$(var.assijus-chrome-extension.ProjectDir)\manifest.json" />
+        <RegistryKey Root="HKCU" Key="Software\TRF2\Assijus" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
+          <RegistryValue Name="Version" Value="[ProductVersion]" Type="string" KeyPath="yes"/>
+        </RegistryKey>
+        <RegistryKey Root="HKCU"
+                     Key="Software\Google\Chrome\NativeMessagingHosts\br.jus.trf2.assijus"
+              ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
+          <RegistryValue Type="string" Value="[INSTALLFOLDER]manifest.json"/>
+        </RegistryKey>
+        <RegistryKey Root="HKCU"
+                     Key="Software\Google\Chrome\Extensions\ifabfihopbhogohngopafekijckmpmka"
+              ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
+          <RegistryValue Type="string" Name="update_url" Value="https://clients2.google.com/service/update2/crx"/>
+        </RegistryKey>
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>
