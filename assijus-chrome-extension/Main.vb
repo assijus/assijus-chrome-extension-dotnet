@@ -90,7 +90,7 @@ Module Main
 
         Dim testresponse As New TestResponse
         testresponse.provider = "Assijus Signer Extension"
-        testresponse.version = "1.2.9.0"
+        testresponse.version = "1.2.10.6"
         testresponse.status = "OK"
         Dim jsonOut As String = jsonSerializer.Serialize(testresponse)
 

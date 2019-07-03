@@ -140,11 +140,21 @@ Module BluC
                     hash = New SHA512Managed()
             End Select
 
+            ' Note that this will return a Basic crypto provider, with only SHA-1 support
             Dim privateKey As RSACryptoServiceProvider = DirectCast(certificate.PrivateKey, RSACryptoServiceProvider)
             Dim publicKey As RSACryptoServiceProvider = DirectCast(certificate.PublicKey.Key, RSACryptoServiceProvider)
 
+            Try
+                signature = privateKey.SignData(content, hash)
+            Catch ex As Exception
+                ' Force use of the Enhanced RSA And AES Cryptographic Provider with openssl-generated SHA256 keys
+                Dim enhCsp = New RSACryptoServiceProvider().CspKeyContainerInfo
+                Dim cspparams = New CspParameters(enhCsp.ProviderType, enhCsp.ProviderName, privateKey.CspKeyContainerInfo.KeyContainerName)
+                Dim enhancedPrivateKey As RSACryptoServiceProvider = New RSACryptoServiceProvider(cspparams)
+                signature = enhancedPrivateKey.SignData(content, hash)
+            End Try
+
             Dim verify As Boolean = False
-            signature = privateKey.SignData(content, hash)
             verify = publicKey.VerifyData(content, hash, signature)
         End If
         Return signature
