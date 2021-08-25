@@ -70,6 +70,8 @@ Module Main
                 jsonOut = token(genericrequest.data)
             ElseIf genericrequest.url.EndsWith("/sign") Then
                 jsonOut = sign(genericrequest.data)
+            ElseIf genericrequest.url.EndsWith("/clearcurrentcert") Then
+                jsonOut = clearCurrentCertificateRequest()
             Else
                 Return "{""success"":false,""data"":{""errormsg"":""Error 404: file not found""}}"
             End If
@@ -84,14 +86,28 @@ Module Main
         End Try
     End Function
 
+    Private Function clearCurrentCertificateRequest() As String
+        Dim jsonSerializer As New JavaScriptSerializer
+        BluC.clearCurrentCertificate()
+
+        Dim genericResponse As New GenericResponse
+        genericResponse.errormsg = "OK"
+
+        Dim jsonOut As String = jsonSerializer.Serialize(genericResponse)
+
+        Return jsonOut
+
+    End Function
 
     Function test() As String
         Dim jsonSerializer As New JavaScriptSerializer
 
         Dim testresponse As New TestResponse
         testresponse.provider = "Assijus Signer Extension"
-        testresponse.version = "1.2.10.6"
+        testresponse.version = "1.2.11.0"
         testresponse.status = "OK"
+        testresponse.clearCurrentCertificateEnabled = True
+
         Dim jsonOut As String = jsonSerializer.Serialize(testresponse)
 
         Return jsonOut
@@ -237,6 +253,7 @@ Module Main
         Public version As String
         Public status As String
         Public errormsg As String
+        Public clearCurrentCertificateEnabled As Boolean
     End Class
 
 
