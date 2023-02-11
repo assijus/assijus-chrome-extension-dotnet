@@ -106,6 +106,7 @@ Module BluC
         Dim contentInfo As ContentInfo = New ContentInfo(msg)
         Dim signedCms As SignedCms = New SignedCms(contentInfo, True)
         Dim cmsSigner As CmsSigner = New CmsSigner(signerCert)
+        cmsSigner.DigestAlgorithm = New Oid("1.3.14.3.2.26")
         signedCms.ComputeSignature(cmsSigner, False)
         Dim ab As Byte() = signedCms.Encode()
 
